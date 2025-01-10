@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useEffect, ReactNode } from "react";
+import React, { createContext, useReducer, useEffect, useCallback, ReactNode } from "react";
 import { Agent } from "../types/Agent";
 
 interface AgentsState {
@@ -29,6 +29,16 @@ type Action =
 
 const AgentsContext = createContext<AgentsContextProps | undefined>(undefined);
 
+// Helper functions to handle localStorage
+const loadAgentsFromLocalStorage = (): Agent[] => {
+  const storedAgents = localStorage.getItem("agents");
+  return storedAgents ? JSON.parse(storedAgents) : [];
+};
+
+const saveAgentsToLocalStorage = (agents: Agent[]): void => {
+  localStorage.setItem("agents", JSON.stringify(agents));
+};
+
 const agentsReducer = (state: AgentsState, action: Action): AgentsState => {
   switch (action.type) {
     case "FETCH_AGENTS_REQUEST":
@@ -42,14 +52,14 @@ const agentsReducer = (state: AgentsState, action: Action): AgentsState => {
     case "UPDATE_AGENT":
       return {
         ...state,
-        agents: state.agents.map((agent) =>
+        agents: state.agents.map(agent =>
           agent.id === action.payload.id ? action.payload : agent
         ),
       };
     case "DELETE_AGENT":
       return {
         ...state,
-        agents: state.agents.filter((agent) => agent.id !== action.payload),
+        agents: state.agents.filter(agent => agent.id !== action.payload),
       };
     default:
       return state;
@@ -59,49 +69,65 @@ const agentsReducer = (state: AgentsState, action: Action): AgentsState => {
 const AgentsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(agentsReducer, initialState);
 
-  const fetchAgents = async () => {
+  const fetchAgents = useCallback(async () => {
     dispatch({ type: "FETCH_AGENTS_REQUEST" });
 
-    try {
-      const response = await fetch(
-        "https://jsonplaceholder.typicode.com/users"
-      );
+    const agentsFromStorage = loadAgentsFromLocalStorage();
+    if (agentsFromStorage.length > 0) {
+      // Use data from localStorage directly if available
+      dispatch({ type: "FETCH_AGENTS_SUCCESS", payload: agentsFromStorage });
+    } else {
+      try {
+        const response = await fetch("https://jsonplaceholder.typicode.com/users");
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch agents");
+        if (!response.ok) {
+          throw new Error("Failed to fetch agents");
+        }
+
+        const data = await response.json();
+        const agentsData: Agent[] = data.map((agent: any) => ({
+          id: String(agent.id),
+          name: agent.name,
+          email: agent.email,
+          status: "Inactive",
+        }));
+
+        dispatch({ type: "FETCH_AGENTS_SUCCESS", payload: agentsData });
+        saveAgentsToLocalStorage(agentsData); // Save to localStorage
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        dispatch({ type: "FETCH_AGENTS_FAILURE", payload: errorMessage });
       }
-
-      const data = await response.json();
-      const agentsData: Agent[] = data.map((agent: any) => ({
-        id: String(agent.id),
-        name: agent.name,
-        email: agent.email,
-        status: "Inactive",
-      }));
-
-      dispatch({ type: "FETCH_AGENTS_SUCCESS", payload: agentsData });
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
-      dispatch({ type: "FETCH_AGENTS_FAILURE", payload: errorMessage });
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchAgents();
-  }, []);
+  }, [fetchAgents]);
 
-  const addAgent = (agent: Agent) =>
+  // Dispatchers wrapped in useCallback to prevent unnecessary re-renders
+  const addAgent = useCallback((agent: Agent) => {
+    const updatedAgents = [...state.agents, agent];
     dispatch({ type: "ADD_AGENT", payload: agent });
-  const updateAgent = (agent: Agent) =>
+    saveAgentsToLocalStorage(updatedAgents); // Save to localStorage
+  }, [state.agents]);
+
+  const updateAgent = useCallback((agent: Agent) => {
+    const updatedAgents = state.agents.map(existingAgent =>
+      existingAgent.id === agent.id ? agent : existingAgent
+    );
     dispatch({ type: "UPDATE_AGENT", payload: agent });
-  const deleteAgent = (id: string) =>
+    saveAgentsToLocalStorage(updatedAgents); // Save to localStorage
+  }, [state.agents]);
+
+  const deleteAgent = useCallback((id: string) => {
+    const updatedAgents = state.agents.filter(agent => agent.id !== id);
     dispatch({ type: "DELETE_AGENT", payload: id });
+    saveAgentsToLocalStorage(updatedAgents); // Save to localStorage
+  }, [state.agents]);
 
   return (
-    <AgentsContext.Provider
-      value={{ ...state, addAgent, updateAgent, deleteAgent }}
-    >
+    <AgentsContext.Provider value={{ ...state, addAgent, updateAgent, deleteAgent }}>
       {children}
     </AgentsContext.Provider>
   );
