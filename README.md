@@ -1,46 +1,37 @@
-# Getting Started with Create React App
+# Agent Management Web Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Description
+This web application allows an admin to manage a network of agents. The admin can add, update, view, and delete agents, providing a simple yet effective interface for managing agent information.
 
-## Available Scripts
+## Features Implemented
 
-In the project directory, you can run:
+### Must-Have Features
+- **List of Agents**: Displays a list of agents with their Name, Email, and Status (Active/Inactive).
+- **Add Agent**: A form to add a new agent with validation for email input.
+- **Edit Agent**: Ability to edit existing agent details using the same form.
+- **Delete Agent**: Functionality to delete an agent from the list.
+- **State Management**: Utilizes React Context for state management.
+- **TypeScript**: The application is built using TypeScript for type safety.
 
-### `yarn start`
+### Nice-to-Have Features (if implemented)
+- **Search and Filter**: A search bar to filter agents by name or email.
+- **Responsive Design**: The UI is responsive and mobile-friendly.
+- **Agent Details Page**: Clicking on an agent allows viewing detailed information on a separate page.
+- **Persistent Storage**: Agent data is stored in localStorage for persistence across page reloads.
+- **API Integration**: Fetches agent data from a mock REST API.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Instructions for Running the App
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+To run the application, follow these steps:
 
-### `yarn test`
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/bjmmtin/Agent-Management.git
+   
+2. Install the dependencies:
+    ```bash
+    yarn install
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+3. Start the application:
+    ```bash
+    npm start
