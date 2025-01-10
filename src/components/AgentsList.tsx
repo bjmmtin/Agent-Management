@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, {  useState } from "react";
 import { Link } from "react-router-dom";
-import { AgentsContext } from "../context/AgentsContext";
+import { useAgents } from "../context/AgentsContext";
 import {
   Box,
   Card,
@@ -16,7 +16,7 @@ import { Delete, Edit, Search, Visibility } from "@mui/icons-material";
 import { Agent } from "../types/Agent";
 
 const AgentsList: React.FC = () => {
-  const { agents, deleteAgent } = useContext(AgentsContext);
+  const { agents, deleteAgent } = useAgents();
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredAgents = agents.filter(

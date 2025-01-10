@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Button,
@@ -11,11 +11,11 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { AgentsContext } from "../context/AgentsContext";
+import { useAgents } from "../context/AgentsContext";
 import { Agent } from "../types/Agent";
 
 const AgentForm: React.FC = () => {
-  const { addAgent, updateAgent, agents } = useContext(AgentsContext);
+  const { addAgent, updateAgent, agents } = useAgents();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
