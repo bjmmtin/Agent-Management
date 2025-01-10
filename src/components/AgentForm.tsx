@@ -1,8 +1,18 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
-import { AgentsContext } from '../context/AgentsContext';
-import { Agent } from '../types/Agent';
+import React, { useContext, useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Box,
+  Typography,
+} from "@mui/material";
+import { AgentsContext } from "../context/AgentsContext";
+import { Agent } from "../types/Agent";
 
 const AgentForm: React.FC = () => {
   const { addAgent, updateAgent, agents } = useContext(AgentsContext);
@@ -11,10 +21,10 @@ const AgentForm: React.FC = () => {
   const isEditMode = !!id;
 
   const [formState, setFormState] = useState<Agent>({
-    id: '',
-    name: '',
-    email: '',
-    status: 'Inactive',
+    id: "",
+    name: "",
+    email: "",
+    status: "Inactive",
   });
 
   useEffect(() => {
@@ -43,46 +53,71 @@ const AgentForm: React.FC = () => {
       addAgent({ ...formState, id: Date.now().toString() });
     }
 
-    navigate('/');
+    navigate("/");
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>{isEditMode ? 'Edit Agent' : 'Add Agent'}</h1>
-      <TextField
-        fullWidth
-        label="Name"
-        name="name"
-        value={formState.name}
-        onChange={handleInputChange}
-        margin="normal"
-        required
-      />
-      <TextField
-        fullWidth
-        label="Email"
-        name="email"
-        type="email"
-        value={formState.email}
-        onChange={handleInputChange}
-        margin="normal"
-        required
-      />
-      <FormControl fullWidth margin="normal">
-        <InputLabel>Status</InputLabel>
-        <Select
-          name="status"
-          value={formState.status}
-          onChange={handleSelectChange}
+    <Box
+      sx={{
+        padding: 4,
+        maxWidth: 600,
+        margin: "0 auto",
+        backgroundColor: "#fff",
+        boxShadow: 3,
+        borderRadius: 2,
+      }}
+    >
+      <Typography variant="h4" component="h1" gutterBottom align="center">
+        {isEditMode ? "Edit Agent" : "Add Agent"}
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          fullWidth
+          label="Name"
+          name="name"
+          value={formState.name}
+          onChange={handleInputChange}
+          margin="normal"
           required
-        >
-          <MenuItem value="Active">Active</MenuItem>
-          <MenuItem value="Inactive">Inactive</MenuItem>
-        </Select>
-      </FormControl>
-      <button type="submit">{isEditMode ? 'Update' : 'Add'}</button>
-      <button type="button" onClick={() => navigate('/')}>Cancel</button>
-    </form>
+        />
+        <TextField
+          fullWidth
+          label="Email"
+          name="email"
+          type="email"
+          value={formState.email}
+          onChange={handleInputChange}
+          margin="normal"
+          required
+        />
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Status</InputLabel>
+          <Select
+            sx={{ marginTop: 0.5 }}
+            name="status"
+            value={formState.status}
+            onChange={handleSelectChange}
+            required
+            label="status"
+          >
+            <MenuItem value="Active">Active</MenuItem>
+            <MenuItem value="Inactive">Inactive</MenuItem>
+          </Select>
+        </FormControl>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+          <Button variant="contained" color="primary" type="submit">
+            {isEditMode ? "Update" : "Add"}
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => navigate("/")}
+          >
+            Cancel
+          </Button>
+        </Box>
+      </form>
+    </Box>
   );
 };
 

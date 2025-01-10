@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AgentsContext } from '../context/AgentsContext';
+import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { AgentsContext } from "../context/AgentsContext";
 import {
   Table,
   TableBody,
@@ -12,13 +12,16 @@ import {
   TextField,
   Button,
   IconButton,
-} from '@mui/material';
-import { Delete, Edit, Visibility } from '@mui/icons-material';
-import { Agent } from '../types/Agent';
+  Box,
+  Typography,
+  InputAdornment,
+} from "@mui/material";
+import { Delete, Edit, Search, Visibility } from "@mui/icons-material";
+import { Agent } from "../types/Agent";
 
 const AgentsList: React.FC = () => {
   const { agents, deleteAgent } = useContext(AgentsContext);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filteredAgents = agents.filter(
     (agent) =>
@@ -27,8 +30,10 @@ const AgentsList: React.FC = () => {
   );
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Agents List</h1>
+    <Box sx={{ padding: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Agents List
+      </Typography>
       <TextField
         label="Search by name or email"
         variant="outlined"
@@ -36,11 +41,25 @@ const AgentsList: React.FC = () => {
         margin="normal"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
+        sx={{ marginBottom: 2 }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Search />
+            </InputAdornment>
+          ),
+        }}
       />
-      <Button variant="contained" color="primary" component={Link} to="/add">
+      <Button
+        variant="contained"
+        color="primary"
+        component={Link}
+        to="/add"
+        sx={{ marginBottom: 2 }}
+      >
         Add Agent
       </Button>
-      <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+      <TableContainer component={Paper} sx={{ marginTop: 2 }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -57,13 +76,34 @@ const AgentsList: React.FC = () => {
                 <TableCell>{agent.email}</TableCell>
                 <TableCell>{agent.status}</TableCell>
                 <TableCell>
-                  <IconButton component={Link} to={`/details/${agent.id}`}>
+                  <IconButton
+                    component={Link}
+                    to={`/details/${agent.id}`}
+                    sx={{
+                      marginRight: 1,
+                      "&:hover": { color: "primary.main" },
+                    }}
+                  >
                     <Visibility />
                   </IconButton>
-                  <IconButton component={Link} to={`/edit/${agent.id}`}>
+                  <IconButton
+                    component={Link}
+                    to={`/edit/${agent.id}`}
+                    sx={{
+                      marginRight: 1,
+                      "&:hover": { color: "blue" },
+                    }}
+                  >
                     <Edit />
                   </IconButton>
-                  <IconButton onClick={() => deleteAgent(agent.id)} color="error">
+                  <IconButton
+                    onClick={() => deleteAgent(agent.id)}
+                    color="error"
+                    sx={{
+                      "&:hover": { backgroundColor: "rgba(255, 0, 0, 0.1)" },
+                      padding: 1,
+                    }}
+                  >
                     <Delete />
                   </IconButton>
                 </TableCell>
@@ -72,7 +112,7 @@ const AgentsList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </Box>
   );
 };
 
